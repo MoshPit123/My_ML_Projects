@@ -3,6 +3,7 @@ import logging
 import nest_asyncio
 from typing import List, Dict
 import requests
+import os
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -12,7 +13,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_community.vectorstores import FAISS
 
-TOKEN = 'Ваш сгенерированный токен Telegram-бота'
+TELEGRAM_BOT_TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
+HUGGINGFACE_API_TOKEN = os.environ['HUGGINGFACE_API_TOKEN']
 API_KEY = 'Bearer io-v2-eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJvd25lciI6ImY5YWMxNjFhLTI4MGYtNDQ5NC1hMzI0LTE3NDE4Y2QzMDUzMiIsImV4cCI6NDg5NjYwMjUxOX0.N12SLupj4u4E91ibiBzyem2eieMjCRbExcU8lWy06-9Oyy4zHcomuN9U3ca4J_Jbg7pLYyezYyM4TitVrSZtCA'
 url = "https://api.intelligence.io.solutions/api/v1/chat/completions"
 
@@ -21,13 +23,11 @@ nest_asyncio.apply()
 class RAG:
     def __init__(self, csv_path: str = "exercises.csv"):
 
-        token =  "Ваш сгенерированный токен HuggingFace"
-
         # Инициализация модели эмбеддингов с токеном
         self.embedding_model = HuggingFaceEndpointEmbeddings(
             model="sentence-transformers/all-MiniLM-L6-v2",
             task = "feature-extraction",
-            huggingfacehub_api_token=token,
+            huggingfacehub_api_token=HUGGINGFACE_API_TOKEN,
             model_kwargs={'device': 'cpu'}
         )
 
@@ -209,7 +209,7 @@ Day 3: Upper Body Pull
         return answer
 
 # Инициализация бота
-bot = Bot(TOKEN)
+bot = Bot(TELEGRAM_BOT_TOKEN)
 dp = Dispatcher()
 rag = RAG()
 
